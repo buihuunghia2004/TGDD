@@ -1,4 +1,5 @@
 import { IEmailJob, IVerifyEmailJob } from '@/common/interfaces/job.interface';
+import { Uuid } from '@/common/types/common.type';
 import { Branded } from '@/common/types/types';
 import { AllConfigType } from '@/config/config.type';
 import { SYSTEM_USER_ID } from '@/constants/app.constant';
@@ -10,7 +11,13 @@ import { createCacheKey } from '@/utils/cache.util';
 import { verifyPassword } from '@/utils/password.util';
 import { InjectQueue } from '@nestjs/bullmq';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { BadRequestException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -23,7 +30,7 @@ import ms from 'ms';
 import { Repository } from 'typeorm';
 import { SessionEntity } from '../user/entities/session.entity';
 import { UserEntity } from '../user/entities/user.entity';
-import { LoginReqDto } from './dto/login.req.dto';
+import { AdminLoginReqDto, UserLoginReqDto } from './dto/login.req.dto';
 import { LoginResDto } from './dto/login.res.dto';
 import { RefreshReqDto } from './dto/refresh.req.dto';
 import { RefreshResDto } from './dto/refresh.res.dto';
@@ -31,7 +38,7 @@ import { RegisterReqDto } from './dto/register.req.dto';
 import { RegisterResDto } from './dto/register.res.dto';
 import { JwtPayloadType } from './types/jwt-payload.type';
 import { JwtRefreshPayloadType } from './types/jwt-refresh-payload.type';
-import { Uuid } from '@/common/types/common.type';
+import { AdminEntity } from '../admin/entities/admin.entity';
 
 type Token = Branded<
   {
@@ -49,6 +56,8 @@ export class AuthService {
     private readonly jwtService: JwtService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(AdminEntity)
+    private readonly adminRepository: Repository<AdminEntity>,
     @InjectQueue(QueueName.EMAIL)
     private readonly emailQueue: Queue<IEmailJob, any, string>,
     @Inject(CACHE_MANAGER)
@@ -60,7 +69,54 @@ export class AuthService {
    * @param dto LoginReqDto
    * @returns LoginResDto
    */
-  async signIn(dto: LoginReqDto): Promise<LoginResDto> {
+
+  async adminLogin(dto: AdminLoginReqDto): Promise<LoginResDto> {    
+    const { username, password } = dto;
+    const user = await this.adminRepository.findOne({
+      where: { username },
+      select: ['id', 'email', 'password'],
+    });
+
+    const isPasswordValid =
+      user && (await verifyPassword(password, user.password));
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException();
+    }
+
+    const hash = crypto
+      .createHash('sha256')
+      .update(randomStringGenerator())
+      .digest('hex');
+
+    console.log('hash', hash);
+    
+    const session = new SessionEntity({
+      hash,
+      adminId: user.id,
+      createdBy: SYSTEM_USER_ID,
+      updatedBy: SYSTEM_USER_ID,
+    });
+
+    console.log('session1', session);
+    
+    await session.save();
+
+    console.log('session', session);
+    
+
+    const token = await this.createToken({
+      id: user.id,
+      sessionId: session.id,
+      hash,
+    });
+
+    return plainToInstance(LoginResDto, {
+      userId: user.id,
+      ...token,
+    });
+  }
+  async userLogin(dto: UserLoginReqDto): Promise<LoginResDto> {
     const { email, password } = dto;
     const user = await this.userRepository.findOne({
       where: { email },
@@ -129,7 +185,7 @@ export class AuthService {
     );
     await this.cacheManager.set(
       createCacheKey(CacheKey.EMAIL_VERIFICATION, user.id), //key
-      token,  //value
+      token, //value
       ms(tokenExpiresIn), //ttl
     );
     await this.emailQueue.add(
@@ -233,7 +289,7 @@ export class AuthService {
   }
   public async getIdFromToken(token: string): Promise<string> {
     console.log(token);
-    
+
     try {
       // Giải mã token và trả về id
       const decoded = await this.jwtService.verifyAsync(token, {
@@ -292,29 +348,31 @@ export class AuthService {
     } as Token;
   }
 
-  public async verifyEmail(token: string): Promise<void> {        
+  public async verifyEmail(token: string): Promise<void> {
     // Check if the token is valid
-    const id  = await this.getIdFromToken(token) as Uuid;
+    const id = (await this.getIdFromToken(token)) as Uuid;
     const user = await UserEntity.findOneBy({ id });
     if (!user) {
       throw new NotFoundException();
     }
 
     console.log('user', user);
-    
+
     // Check if the user is already verified
     const cacheKey = createCacheKey(CacheKey.EMAIL_VERIFICATION, id);
     console.log('cacheKey', cacheKey);
-    
+
     const isVerified = await this.cacheManager.get<string>(cacheKey);
 
     console.log('isVerified', isVerified);
-    if (!isVerified) {      
+    if (!isVerified) {
       throw new BadRequestException();
     }
-    
+
     // Mark the user as verified
-    await this.cacheManager.del(createCacheKey(CacheKey.EMAIL_VERIFICATION, id));
+    await this.cacheManager.del(
+      createCacheKey(CacheKey.EMAIL_VERIFICATION, id),
+    );
     user.isVerified = true;
     await user.save();
   }

@@ -7,11 +7,14 @@ import { UserEntity } from '../user/entities/user.entity';
 import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { AdminModule } from '../admin/admin.module';
+import { AdminEntity } from '../admin/entities/admin.entity';
 
 @Module({
   imports: [
     UserModule,
-    TypeOrmModule.forFeature([UserEntity]),
+    AdminModule,
+    TypeOrmModule.forFeature([UserEntity, AdminEntity]),
     JwtModule.register({}),
     BullModule.registerQueue({
       name: QueueName.EMAIL,

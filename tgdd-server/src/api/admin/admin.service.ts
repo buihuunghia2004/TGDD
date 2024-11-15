@@ -10,8 +10,8 @@ import { CreateAdminReqDto } from './dto/create-admin.req.dto';
 import { AdminResDto } from './dto/admin.res.dto';
 
 @Injectable()
-export class UserService {
-  private readonly logger = new Logger(UserService.name);
+export class AdminService {
+  private readonly logger = new Logger(AdminService.name);
 
   constructor(
     @InjectRepository(AdminEntity)

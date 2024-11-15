@@ -54,9 +54,6 @@ export abstract class UserBaseEntity extends AbstractEntity {
   })
   deletedAt: Date;
 
-  @OneToMany(() => SessionEntity, (session) => session.user)
-  sessions?: SessionEntity[];
-
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword() {

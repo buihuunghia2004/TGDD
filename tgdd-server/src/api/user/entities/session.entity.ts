@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UserEntity } from './user.entity';
+import { AdminEntity } from '@/api/admin/entities/admin.entity';
 
 @Entity('session')
 export class SessionEntity extends AbstractEntity {
@@ -25,20 +26,37 @@ export class SessionEntity extends AbstractEntity {
     name: 'hash',
     type: 'varchar',
     length: 255,
+    nullable: true,
   })
   hash!: string;
 
   @Column({
     name: 'user_id',
     type: 'uuid',
+    nullable: true,
   })
-  userId: Uuid;
+  userId?: Uuid;
+
+  @Column({
+    name: 'admin_id',
+    type: 'uuid',
+    nullable: true,
+  })
+  adminId?: Uuid;
 
   @JoinColumn({
     name: 'user_id',
     referencedColumnName: 'id',
     foreignKeyConstraintName: 'FK_session_user',
   })
-  @ManyToOne(() => UserEntity, (user) => user.sessions)
-  user!: UserEntity;
+  @ManyToOne(() => UserEntity, (user) => user.userSessions)
+  user?: UserEntity;
+
+  @JoinColumn({
+    name: 'admin_id',
+    referencedColumnName: 'id',
+    foreignKeyConstraintName: 'FK_session_admin',
+  })
+  @ManyToOne(() => AdminEntity, (admin) => admin.adminSessions)
+  admin?: AdminEntity;
 }
