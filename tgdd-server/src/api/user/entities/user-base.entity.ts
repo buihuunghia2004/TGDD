@@ -7,9 +7,7 @@ import {
   DeleteDateColumn,
   JoinTable,
   ManyToMany,
-  OneToMany,
 } from 'typeorm';
-import { SessionEntity } from './session.entity';
 import { RoleEntity } from './role.entity';
 
 //entity user base
@@ -32,20 +30,14 @@ export abstract class UserBaseEntity extends AbstractEntity {
   password!: string;
 
   @Column({ default: '' })
-  bio?: string;
-
-  @Column({ default: '' })
   image?: string;
-
-  @Column({ name: 'is_verified', default: false})
-  isVerified: boolean;
 
   @Column({ name: 'is_active', default: false})
   isActive: boolean;
 
-  @ManyToMany(() => RoleEntity)
-  @JoinTable()
-  roles: RoleEntity[];
+  // @ManyToMany(() => RoleEntity)
+  // @JoinTable()
+  // roles: RoleEntity[];
 
   @DeleteDateColumn({
     name: 'deleted_at',

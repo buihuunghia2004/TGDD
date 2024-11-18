@@ -12,6 +12,7 @@ export class OffsetPaginatedDto<TData> {
   pagination: OffsetPaginationDto;
 
   constructor(data: TData[], meta: OffsetPaginationDto) {
+    console.log('data', data[0]);
     this.data = data;
     this.pagination = meta;
   }

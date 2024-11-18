@@ -1,13 +1,14 @@
 import axiosInstance from "~/config/axiosInstance"
 import { createAsyncThunk } from "@reduxjs/toolkit"
-export const login = createAsyncThunk(
-  "auth/login",
+
+export const loginThunk = createAsyncThunk(
+  "/auth/admin/login",
   async (data) => {
-    const response = await axiosInstance.post('/auth/login', data)
-    console.log('data',response.data);
-    const {accessToken} = response.data
+    const response = await axiosInstance.post('/auth/admin/login', data)
+    console.log('data',response);
+    const {accessToken} = response
     sessionStorage.setItem('accessToken', accessToken)
-    return response.data
+    return response
   }
 )
 

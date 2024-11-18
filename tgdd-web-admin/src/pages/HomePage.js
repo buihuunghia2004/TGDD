@@ -27,7 +27,7 @@ const items = [
   getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
   getItem('Files', '9', <FileOutlined />),
 ];
-const DefaultLayout = ({ children }) => {
+const HomePage = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer, borderRadiusLG },
@@ -35,7 +35,8 @@ const DefaultLayout = ({ children }) => {
   return (
     <Layout
       style={{
-        minHeight: '100vh',
+        height: '100vh',
+        overflow: 'hidden',
       }}
     >
       <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
@@ -64,7 +65,7 @@ const DefaultLayout = ({ children }) => {
           </Breadcrumb> */}
           <div
             style={{
-              padding: 24,
+              padding: 12,
               minHeight: 360,
               background: colorBgContainer,
               borderRadius: borderRadiusLG,
@@ -73,15 +74,15 @@ const DefaultLayout = ({ children }) => {
             {children}
           </div>
         </Content>
-        <Footer
+        {/* <Footer
           style={{
             textAlign: 'center',
           }}
         >
           Ant Design ©{new Date().getFullYear()} Created by Ant UED
-        </Footer>
+        </Footer> */}
       </Layout>
     </Layout>
   );
 };
-export default DefaultLayout;
+export default HomePage;

@@ -29,7 +29,7 @@ export class UserService {
   ) {}
 
   async create(dto: CreateUserReqDto): Promise<UserResDto> {
-    const { username, email, password, bio, image } = dto;
+    const { username, email, password, image } = dto;
 
     // check uniqueness of username/email
     const user = await this.userRepository.findOne({
@@ -51,7 +51,6 @@ export class UserService {
       username,
       email,
       password,
-      bio,
       image,
       createdBy: SYSTEM_USER_ID,
       updatedBy: SYSTEM_USER_ID,
@@ -68,7 +67,8 @@ export class UserService {
   ): Promise<OffsetPaginatedDto<UserResDto>> {
     const query = this.userRepository
       .createQueryBuilder('user')
-      .orderBy('user.createdAt', 'DESC');
+      .orderBy(reqDto._sort[0], reqDto._sort[1])
+      // .select(reqDto._only);
     const [users, metaDto] = await paginate<UserEntity>(query, reqDto, {
       skipCount: false,
       takeAll: false,
@@ -114,7 +114,6 @@ export class UserService {
   async update(id: Uuid, updateUserDto: UpdateUserReqDto) {
     const user = await this.userRepository.findOneByOrFail({ id });
 
-    user.bio = updateUserDto.bio;
     user.image = updateUserDto.image;
     user.updatedBy = SYSTEM_USER_ID;
 

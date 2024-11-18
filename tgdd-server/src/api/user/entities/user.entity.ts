@@ -1,7 +1,8 @@
-import { Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserBaseEntity } from '@/api/user/entities/user-base.entity';
 import { Uuid } from '@/common/types/common.type';
 import { SessionEntity } from './session.entity';
+import { RoleEntity } from './role.entity';
 
 @Entity('user')
 export class UserEntity extends UserBaseEntity {
@@ -15,4 +16,18 @@ export class UserEntity extends UserBaseEntity {
 
   @OneToMany(() => SessionEntity, (session) => session.user)
   userSessions?: SessionEntity[];
+
+  @ManyToMany(() => RoleEntity)
+  @JoinTable({
+    name: 'user_roles',
+    joinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'role_id',
+      referencedColumnName: 'id',
+    },
+  })
+  roles: RoleEntity[];
 }

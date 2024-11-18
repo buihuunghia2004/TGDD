@@ -1,12 +1,12 @@
-import Detail from '~/pages/Detail';
-import Home from '~/pages/Home';
+import { AdminManager } from "~/pages";
+import LoginPage from "~/pages/LoginPage";
 
 const publicRoutes = [
-  { path: '/', component: Home},
-  { path: '/detail', component: Detail},
+  { path: '/login', component:LoginPage },
 ];
 
 const privateRoutes = [
+  { path: '/admin-manage', component:AdminManager },
 ];
 
 export { publicRoutes, privateRoutes };

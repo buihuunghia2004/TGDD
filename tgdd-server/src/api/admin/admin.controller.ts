@@ -14,13 +14,18 @@ import {
   Patch,
   Post,
   Query,
+  Request,
 } from '@nestjs/common';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { AdminService } from './admin.service';
+import { UserResDto } from '../user/dto/user.res.dto';
+import { CreateUserReqDto } from '../user/dto/create-user.req.dto';
+import { CreateAdminReqDto } from './dto/create-admin.req.dto';
+import { ListAdminReqDto } from './dto/list-admin.req.dto';
 
-@ApiTags('users')
+@ApiTags('admins')
 @Controller({
-  path: 'users',
+  path: 'admins',
   version: '1',
 })
 export class AdminController {
@@ -35,29 +40,34 @@ export class AdminController {
   //   return await this.userService.findOne(userId);
   // }
 
-  // @Post()
-  // @ApiAuth({
-  //   type: UserResDto,
-  //   summary: 'Create user',
-  //   statusCode: HttpStatus.CREATED,
-  // })
-  // async createUser(
-  //   @Body() createUserDto: CreateUserReqDto,
-  // ): Promise<UserResDto> {
-  //   return await this.userService.create(createUserDto);
-  // }
+  @Post()
+  @ApiAuth({
+    type: UserResDto,
+    summary: 'Create admin',
+    statusCode: HttpStatus.CREATED,
+  })
+  async createUser(
+    @Body() createUserDto: CreateAdminReqDto,
+    @Request() req
+  ): Promise<UserResDto> {
+    return await this.adminService.create(createUserDto,req.user.username);
+  }
 
-  // @Get()
+  @Get()
   // @ApiAuth({
   //   type: UserResDto,
   //   summary: 'List users',
   //   isPaginated: true,
   // })
-  // async findAllUsers(
-  //   @Query() reqDto: ListUserReqDto,
-  // ): Promise<OffsetPaginatedDto<UserResDto>> {
-  //   return await this.userService.findAll(reqDto);
-  // }
+  async findAllAdmins(
+    @Query() reqDto: ListAdminReqDto,
+  ): Promise<OffsetPaginatedDto<UserResDto>> {
+    const a = await this.adminService.findAll(reqDto);
+
+
+    console.log('aaaafddd',a.data[0]);
+    return a
+  }
 
   // @Get('/load-more')
   // @ApiAuth({

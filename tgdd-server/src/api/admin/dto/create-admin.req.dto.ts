@@ -19,8 +19,5 @@ export class CreateAdminReqDto {
   password: string;
 
   @StringFieldOptional()
-  bio?: string;
-
-  @StringFieldOptional()
   image?: string;
 }

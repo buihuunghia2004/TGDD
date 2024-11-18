@@ -39,6 +39,8 @@ import { RegisterResDto } from './dto/register.res.dto';
 import { JwtPayloadType } from './types/jwt-payload.type';
 import { JwtRefreshPayloadType } from './types/jwt-refresh-payload.type';
 import { AdminEntity } from '../admin/entities/admin.entity';
+import { UserDto } from '../user/dto/user.dto';
+import { UserResDto } from '../user/dto/user.res.dto';
 
 type Token = Branded<
   {
@@ -70,12 +72,13 @@ export class AuthService {
    * @returns LoginResDto
    */
 
-  async adminLogin(dto: AdminLoginReqDto): Promise<LoginResDto> {    
+  async adminLogin(dto: AdminLoginReqDto): Promise<LoginResDto> {        
     const { username, password } = dto;
     const user = await this.adminRepository.findOne({
       where: { username },
-      select: ['id', 'email', 'password'],
-    });
+      relations: ['roles'],
+      select: ['id', 'email', 'password', 'roles'],
+    });    
 
     const isPasswordValid =
       user && (await verifyPassword(password, user.password));
@@ -89,7 +92,6 @@ export class AuthService {
       .update(randomStringGenerator())
       .digest('hex');
 
-    console.log('hash', hash);
     
     const session = new SessionEntity({
       hash,
@@ -98,15 +100,18 @@ export class AuthService {
       updatedBy: SYSTEM_USER_ID,
     });
 
-    console.log('session1', session);
-    
     await session.save();
 
-    console.log('session', session);
+    console.log('user', user);
     
+    const userDto = user.toDto(UserDto);
+
+    console.log('userDto', userDto);
 
     const token = await this.createToken({
-      id: user.id,
+      id: userDto.id,
+      roles: userDto.roles,
+      username: dto.username,
       sessionId: session.id,
       hash,
     });
@@ -143,8 +148,11 @@ export class AuthService {
     });
     await session.save();
 
+    const userDto = user.toDto(UserDto);
     const token = await this.createToken({
-      id: user.id,
+      id: userDto.id,
+      roles: userDto.roles,
+      username: userDto.username,
       sessionId: session.id,
       hash,
     });
@@ -223,6 +231,7 @@ export class AuthService {
       where: { id: session.userId },
       select: ['id'],
     });
+    const userDto = user.toDto(UserDto);
 
     const newHash = crypto
       .createHash('sha256')
@@ -232,7 +241,9 @@ export class AuthService {
     SessionEntity.update(session.id, { hash: newHash });
 
     return await this.createToken({
-      id: user.id,
+      id: userDto.id,
+      roles: userDto.roles,
+      username: userDto.username,
       sessionId: session.id,
       hash: newHash,
     });
@@ -306,6 +317,8 @@ export class AuthService {
 
   private async createToken(data: {
     id: string;
+    roles:string[];
+    username:string;
     sessionId: string;
     hash: string;
   }): Promise<Token> {
@@ -318,7 +331,8 @@ export class AuthService {
       await this.jwtService.signAsync(
         {
           id: data.id,
-          role: '', // TODO: add role
+          roles: data.roles,
+          username: data.username,
           sessionId: data.sessionId,
         },
         {
@@ -356,15 +370,11 @@ export class AuthService {
       throw new NotFoundException();
     }
 
-    console.log('user', user);
-
     // Check if the user is already verified
     const cacheKey = createCacheKey(CacheKey.EMAIL_VERIFICATION, id);
-    console.log('cacheKey', cacheKey);
 
     const isVerified = await this.cacheManager.get<string>(cacheKey);
 
-    console.log('isVerified', isVerified);
     if (!isVerified) {
       throw new BadRequestException();
     }
@@ -373,7 +383,7 @@ export class AuthService {
     await this.cacheManager.del(
       createCacheKey(CacheKey.EMAIL_VERIFICATION, id),
     );
-    user.isVerified = true;
+    // user.isVerified = true;
     await user.save();
   }
 }

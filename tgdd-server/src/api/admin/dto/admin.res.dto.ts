@@ -1,9 +1,13 @@
 import {
+  BooleanField,
   ClassField,
+  DateField,
   StringField,
-  StringFieldOptional,
+  URLFieldOptional,
 } from '@/decorators/field.decorators';
-import { Exclude, Expose } from 'class-transformer';
+import { roleTransformer } from '@/utils/transformers/lower-case.transformer';
+import { Exclude, Expose, Transform } from 'class-transformer';
+import { IsOptional, IsPhoneNumber } from 'class-validator';
 
 @Exclude()
 export class AdminResDto {
@@ -19,13 +23,35 @@ export class AdminResDto {
   @Expose()
   email: string;
 
-  @StringFieldOptional()
+  @StringField()
   @Expose()
-  bio?: string;
+  firstName: string;
 
   @StringField()
   @Expose()
+  lastName: string;
+
+  @DateField()
+  @Expose()
+  dob: Date;
+
+  @IsOptional()
+  @IsPhoneNumber('VN', { message: 'Số điện thoại không hợp lệ' })
+  @Expose()
+  phoneNumber: string;
+
+  @StringField()
+  @URLFieldOptional()
+  @Expose()
   image: string;
+
+  @BooleanField()
+  @Expose()
+  isActive: boolean;
+
+  @Transform(roleTransformer, { toClassOnly: true })
+  @Expose()
+  roles?: string[];
 
   @ClassField(() => Date)
   @Expose()
@@ -35,3 +61,18 @@ export class AdminResDto {
   @Expose()
   updatedAt: Date;
 }
+
+export const ADMIN_RES_FIELDS = [
+  'id',
+  'username',
+  'email',
+  'firstName',
+  'lastName',
+  'dob',
+  'phoneNumber',
+  'isActive',
+  'roles',
+  'image',
+  'createdAt',
+  'updatedAt',
+];
