@@ -30,7 +30,8 @@
     "seed:create": "env-cmd ts-node ./node_modules/typeorm-extension/bin/cli.cjs seed:create",
     "prepare": "husky || true",
     "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs"
+    "docs:build": "vuepress build docs",
+    "fs:api": "tsc && node src/utils/generator/generate-api.js"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.2",

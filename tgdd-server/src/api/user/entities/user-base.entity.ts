@@ -5,10 +5,7 @@ import {
   BeforeUpdate,
   Column,
   DeleteDateColumn,
-  JoinTable,
-  ManyToMany,
 } from 'typeorm';
-import { RoleEntity } from './role.entity';
 
 //entity user base
 export abstract class UserBaseEntity extends AbstractEntity {
