@@ -1,16 +1,14 @@
 import React from 'react';
 import { Button, Form, Input } from 'antd';
 import { useDispatch } from 'react-redux';
-import { loginThunk } from '~/services/authService';
 import { useNavigate } from 'react-router-dom';
+import { loginAPI } from '~/services/authService';
 
 const LoginPage = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const onFinish = (values) => {  
-    dispatch(loginThunk(values))
-    navigate('/');
+    dispatch(loginAPI(values))
   };
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);

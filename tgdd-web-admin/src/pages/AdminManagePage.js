@@ -6,7 +6,7 @@ import RoleCard from '~/components/Cards/RoleCard';
 import { useDispatch } from 'react-redux';
 import { getAllaAdminAPI } from '~/services/adminManageService';
 
-const AdminManager = () => {
+const AdminManagerPage = () => {
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRecord, setTotalRecord] = useState(0);
@@ -137,4 +137,4 @@ const AdminManager = () => {
   );
 };
 
-export default AdminManager;
+export default AdminManagerPage;

@@ -1,4 +1,5 @@
-import { AdminManager } from "~/pages";
+import AdminManagePage from "~/pages/AdminManagePage";
+import CategoryPage from "~/pages/CategoryPage";
 import LoginPage from "~/pages/LoginPage";
 
 const publicRoutes = [
@@ -6,7 +7,8 @@ const publicRoutes = [
 ];
 
 const privateRoutes = [
-  { path: '/admin-manage', component:AdminManager },
+  { path: '/admin-manage', component:AdminManagePage },
+  { path: '/categories', component:CategoryPage },
 ];
 
 export { publicRoutes, privateRoutes };
