@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+`import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { CategoryEntity } from './entites/entity';
 
@@ -8,3 +8,4 @@ export class CategoryRepository extends Repository<CategoryEntity> {
     super(CategoryEntity, dataSource.createEntityManager());
   }
 }
+`

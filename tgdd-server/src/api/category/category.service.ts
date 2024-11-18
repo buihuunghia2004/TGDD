@@ -1,18 +1,19 @@
-import { CursorPaginationDto } from '@/common/dto/cursor-pagination/cursor-pagination.dto';
-import { CursorPaginatedDto } from '@/common/dto/cursor-pagination/paginated.dto';
 import { OffsetPaginatedDto } from '@/common/dto/offset-pagination/paginated.dto';
 import { Uuid } from '@/common/types/common.type';
 import { SYSTEM_USER_ID } from '@/constants/app.constant';
 import { ErrorCode } from '@/constants/error-code.constant';
 import { ValidationException } from '@/exceptions/validation.exception';
-import { buildPaginator } from '@/utils/cursor-pagination';
-import { paginate } from '@/utils/offset-pagination';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 import { plainToInstance } from 'class-transformer';
 import { Repository } from 'typeorm';
 import { CategoryEntity } from './entites/category.entity';
+import { CreateCategoryReqDto } from './dto/create-category.req.dto';
+import { CategoryResDto } from './dto/category.res.dto';
+import { ListCategoryReqDto } from './dto/list-category.req.dto';
+import { OffsetPaginationDto } from '@/common/dto/offset-pagination/offset-pagination.dto';
+import { UpdateCategoryReqDto } from './dto/update-category.req.dto';
 
 @Injectable()
 export class CategoryService {
@@ -20,103 +21,62 @@ export class CategoryService {
 
   constructor(
     @InjectRepository(CategoryEntity)
-    private readonly CategoryRepository: Repository<CategoryEntity>,
+    private readonly categoryRepository: Repository<CategoryEntity>,
   ) {}
 
-  // async create(dto: CreateUserReqDto): Promise<UserResDto> {
-  //   const { username, email, password, image } = dto;
+  async create(dto: CreateCategoryReqDto): Promise<CategoryResDto> {
+    const { name } = dto;
 
-  //   // check uniqueness of username/email
-  //   const user = await this.userRepository.findOne({
-  //     where: [
-  //       {
-  //         username,
-  //       },
-  //       {
-  //         email,
-  //       },
-  //     ],
-  //   });
+    const category = await this.categoryRepository.findOne({
+      where: {name}
+    });
 
-  //   if (user) {
-  //     throw new ValidationException(ErrorCode.E001);
-  //   }
+    if (category) {
+      throw new ValidationException(ErrorCode.E001);
+    }
 
-  //   const newUser = new UserEntity({
-  //     username,
-  //     email,
-  //     password,
-  //     image,
-  //     createdBy: SYSTEM_USER_ID,
-  //     updatedBy: SYSTEM_USER_ID,
-  //   });
+    const newUser = new CategoryEntity({
+      name,
+      slug: name.toLowerCase(),
+      createdBy: SYSTEM_USER_ID,
+      updatedBy: SYSTEM_USER_ID,
+    });
 
-  //   const savedUser = await this.userRepository.save(newUser);
-  //   this.logger.debug(savedUser);
+    const savedCategory = await this.categoryRepository.save(newUser);
+    this.logger.debug(savedCategory);
 
-  //   return plainToInstance(UserResDto, savedUser);
-  // }
+    return plainToInstance(CategoryResDto, savedCategory);
+  }
 
-  // async findAll(
-  //   reqDto: ListUserReqDto,
-  // ): Promise<OffsetPaginatedDto<UserResDto>> {
-  //   const query = this.userRepository
-  //     .createQueryBuilder('user')
-  //     .orderBy(reqDto._sort[0], reqDto._sort[1])
-  //     // .select(reqDto._only);
-  //   const [users, metaDto] = await paginate<UserEntity>(query, reqDto, {
-  //     skipCount: false,
-  //     takeAll: false,
-  //   });
-  //   return new OffsetPaginatedDto(plainToInstance(UserResDto, users), metaDto);
-  // }
+  async findAll(reqDto:ListCategoryReqDto): Promise<OffsetPaginatedDto<CategoryResDto>>{
+    console.log('reqDto',reqDto);
+    
+    const [entities,count] = await this.categoryRepository.findAndCount({
+      ...reqDto._options
+    })
 
-  // async loadMoreUsers(
-  //   reqDto: LoadMoreUsersReqDto,
-  // ): Promise<CursorPaginatedDto<UserResDto>> {
-  //   const queryBuilder = this.userRepository.createQueryBuilder('user');
-  //   const paginator = buildPaginator({
-  //     entity: UserEntity,
-  //     alias: 'user',
-  //     paginationKeys: ['createdAt'],
-  //     query: {
-  //       limit: reqDto.limit,
-  //       order: 'DESC',
-  //       afterCursor: reqDto.afterCursor,
-  //       beforeCursor: reqDto.beforeCursor,
-  //     },
-  //   });
+    const metaDto = new OffsetPaginationDto(count, reqDto);
+    return new OffsetPaginatedDto<CategoryResDto>(plainToInstance(CategoryResDto,entities), metaDto);
+  }
 
-  //   const { data, cursor } = await paginator.paginate(queryBuilder);
+  async findOne(id: Uuid): Promise<CategoryResDto> {
+    assert(id, 'id is required');
+    const user = await this.categoryRepository.findOneByOrFail({ id });
+    return user.toDto(CategoryResDto);
+  }
 
-  //   const metaDto = new CursorPaginationDto(
-  //     data.length,
-  //     cursor.afterCursor,
-  //     cursor.beforeCursor,
-  //     reqDto,
-  //   );
+  async update(id: Uuid, updateCategoryDto: UpdateCategoryReqDto ) {
+    const category = await this.categoryRepository.findOneByOrFail({ id });
 
-  //   return new CursorPaginatedDto(plainToInstance(UserResDto, data), metaDto);
-  // }
+    category.name = updateCategoryDto.name;
+    category.slug = updateCategoryDto.name.toLowerCase();
+    category.updatedBy = SYSTEM_USER_ID;
 
-  // async findOne(id: Uuid): Promise<UserResDto> {
-  //   assert(id, 'id is required');
-  //   const user = await this.userRepository.findOneByOrFail({ id });
+    await this.categoryRepository.save(category);
+  }
 
-  //   return user.toDto(UserResDto);
-  // }
-
-  // async update(id: Uuid, updateUserDto: UpdateUserReqDto) {
-  //   const user = await this.userRepository.findOneByOrFail({ id });
-
-  //   user.image = updateUserDto.image;
-  //   user.updatedBy = SYSTEM_USER_ID;
-
-  //   await this.userRepository.save(user);
-  // }
-
-  // async remove(id: Uuid) {
-  //   await this.userRepository.findOneByOrFail({ id });
-  //   await this.userRepository.softDelete(id);
-  // }
+  async remove(id: Uuid) {
+    await this.categoryRepository.findOneByOrFail({ id });
+    await this.categoryRepository.softDelete(id);
+  }
 }

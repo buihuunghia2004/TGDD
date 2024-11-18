@@ -1,4 +1,4 @@
-import { DeleteDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+`import { DeleteDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Uuid } from '@/common/types/common.type';
 import { AbstractEntity } from '@/database/entities/abstract.entity';
 
@@ -21,3 +21,4 @@ export class CategoryEntity extends AbstractEntity {
   deletedAt: Date;
 
 }
+`

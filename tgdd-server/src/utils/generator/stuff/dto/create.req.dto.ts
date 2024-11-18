@@ -1,4 +1,4 @@
-import {
+`import {
   EmailField,
   PasswordField,
   StringField,
@@ -24,3 +24,4 @@ export class CreateUserReqDto {
   @StringFieldOptional()
   image?: string;
 }
+`

@@ -1,6 +1,14 @@
-import { DeleteDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BrandEntity } from '@/api/brand/entites/brand.entity';
 import { Uuid } from '@/common/types/common.type';
 import { AbstractEntity } from '@/database/entities/abstract.entity';
+import {
+  Column,
+  DeleteDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Relation
+} from 'typeorm';
 
 @Entity('category')
 export class CategoryEntity extends AbstractEntity {
@@ -9,9 +17,16 @@ export class CategoryEntity extends AbstractEntity {
     Object.assign(this, data);
   }
 
-  @PrimaryGeneratedColumn('uuid', { primaryKeyConstraintName: 'PK_category_id' })
+  @PrimaryGeneratedColumn('uuid', {
+    primaryKeyConstraintName: 'PK_category_id',
+  })
   id!: Uuid;
 
+  @Column({ nullable: false })
+  name!: string;
+
+  @Column({ nullable: false })
+  slug!: string;
 
   @DeleteDateColumn({
     name: 'deleted_at',
@@ -20,4 +35,6 @@ export class CategoryEntity extends AbstractEntity {
   })
   deletedAt: Date;
 
+  @OneToMany(() => BrandEntity, (brand) => brand.category)
+  brands: Relation<BrandEntity[]>;
 }

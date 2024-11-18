@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+`import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoryEntity } from './entites/entity';
 import { CategoryController } from './controller';
@@ -11,3 +11,4 @@ import { CategoryService } from './service';
   exports: [CategoryService],
 })
 export class CategoryModule {}
+`

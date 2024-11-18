@@ -25,6 +25,9 @@ import { ApiParam, ApiTags } from '@nestjs/swagger';
 // import { UserService } from './user.service';
 import { AuthGuard } from '@/guards/auth.guard';
 import { CategoryService } from './category.service';
+import { CategoryResDto } from './dto/category.res.dto';
+import { CreateCategoryReqDto } from './dto/create-category.req.dto';
+import { ListCategoryReqDto } from './dto/list-category.req.dto';
 
 @ApiTags('categories')
 // @UseGuards(AuthGuard)
@@ -44,29 +47,29 @@ export class CategoryController {
   //   return await this.userService.findOne(userId);
   // }
 
-  // @Post()
-  // @ApiAuth({
-  //   type: UserResDto,
-  //   summary: 'Create user',
-  //   statusCode: HttpStatus.CREATED,
-  // })
-  // async createUser(
-  //   @Body() createUserDto: CreateUserReqDto,
-  // ): Promise<UserResDto> {
-  //   return await this.userService.create(createUserDto);
-  // }
+  @Post()
+  @ApiAuth({
+    type: CategoryResDto,
+    summary: 'Create category',
+    statusCode: HttpStatus.CREATED,
+  })
+  async createUser(
+    @Body() createCategoryDto: CreateCategoryReqDto,
+  ): Promise<CategoryResDto> {
+    return await this.categoryService.create(createCategoryDto);
+  }
 
-  // @Get()
-  // @ApiAuth({
-  //   type: UserResDto,
-  //   summary: 'List users',
-  //   isPaginated: true,
-  // })
-  // async findAllUsers(
-  //   @Query() reqDto: ListUserReqDto,
-  // ): Promise<OffsetPaginatedDto<UserResDto>> {
-  //   return await this.userService.findAll(reqDto);
-  // }
+  @Get()
+  @ApiAuth({
+    type: CategoryResDto,
+    summary: 'List users',
+    isPaginated: true,
+  })
+  async findAllUsers(
+    @Query() reqDto: ListCategoryReqDto,
+  ): Promise<OffsetPaginatedDto<CategoryResDto>> {
+    return await this.categoryService.findAll(reqDto);
+  }
 
   // @Get('/load-more')
   // @ApiAuth({

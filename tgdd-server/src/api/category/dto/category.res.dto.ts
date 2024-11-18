@@ -1,31 +1,18 @@
-`import {
+import {
   ClassField,
   StringField,
-  StringFieldOptional,
 } from '@/decorators/field.decorators';
 import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
-export class UserResDto {
+export class CategoryResDto {
   @StringField()
   @Expose()
-  id: string;
+  name: string;
 
   @StringField()
   @Expose()
-  username: string;
-
-  @StringField()
-  @Expose()
-  email: string;
-
-  @StringFieldOptional()
-  @Expose()
-  bio?: string;
-
-  @StringField()
-  @Expose()
-  image: string;
+  slug: string;
 
   @ClassField(() => Date)
   @Expose()
@@ -35,4 +22,10 @@ export class UserResDto {
   @Expose()
   updatedAt: Date;
 }
-`
+
+export const CATEGORY_RES_FIELDS = [
+  'name',
+  'slug',
+  'createdAt',
+  'updatedAt',
+];
