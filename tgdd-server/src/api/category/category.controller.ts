@@ -1,7 +1,5 @@
-import { CursorPaginatedDto } from '@/common/dto/cursor-pagination/paginated.dto';
 import { OffsetPaginatedDto } from '@/common/dto/offset-pagination/paginated.dto';
 import { Uuid } from '@/common/types/common.type';
-import { CurrentUser } from '@/decorators/current-user.decorator';
 import { ApiAuth } from '@/decorators/http.decorators';
 import {
   Body,
@@ -17,20 +15,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
-// import { CreateUserReqDto } from './dto/create-user.req.dto';
-// import { ListUserReqDto } from './dto/list-user.req.dto';
-// import { LoadMoreUsersReqDto } from './dto/load-more-users.req.dto';
-// import { UpdateUserReqDto } from './dto/update-user.req.dto';
-// import { UserResDto } from './dto/user.res.dto';
-// import { UserService } from './user.service';
 import { AuthGuard } from '@/guards/auth.guard';
 import { CategoryService } from './category.service';
 import { CategoryResDto } from './dto/category.res.dto';
 import { CreateCategoryReqDto } from './dto/create-category.req.dto';
 import { ListCategoryReqDto } from './dto/list-category.req.dto';
+import { UpdateCategoryReqDto } from './dto/update-category.req.dto';
 
 @ApiTags('categories')
-// @UseGuards(AuthGuard)
+@UseGuards(AuthGuard)
 @Controller({
   path: 'categories',
   version: '1',
@@ -38,22 +31,13 @@ import { ListCategoryReqDto } from './dto/list-category.req.dto';
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  // @ApiAuth({
-  //   type: UserResDto,
-  //   summary: 'Get current user',
-  // })
-  // @Get('me')
-  // async getCurrentUser(@CurrentUser('id') userId: Uuid): Promise<UserResDto> {
-  //   return await this.userService.findOne(userId);
-  // }
-
   @Post()
   @ApiAuth({
     type: CategoryResDto,
     summary: 'Create category',
     statusCode: HttpStatus.CREATED,
   })
-  async createUser(
+  async createCategory(
     @Body() createCategoryDto: CreateCategoryReqDto,
   ): Promise<CategoryResDto> {
     return await this.categoryService.create(createCategoryDto);
@@ -62,58 +46,39 @@ export class CategoryController {
   @Get()
   @ApiAuth({
     type: CategoryResDto,
-    summary: 'List users',
+    summary: 'List categories',
     isPaginated: true,
   })
-  async findAllUsers(
+  async findAllCategories(
     @Query() reqDto: ListCategoryReqDto,
   ): Promise<OffsetPaginatedDto<CategoryResDto>> {
     return await this.categoryService.findAll(reqDto);
   }
 
-  // @Get('/load-more')
-  // @ApiAuth({
-  //   type: UserResDto,
-  //   summary: 'Load more users',
-  //   isPaginated: true,
-  //   paginationType: 'cursor',
-  // })
-  // async loadMoreUsers(
-  //   @Query() reqDto: LoadMoreUsersReqDto,
-  // ): Promise<CursorPaginatedDto<UserResDto>> {
-  //   return await this.userService.loadMoreUsers(reqDto);
-  // }
+  @Get(':id')
+  @ApiAuth({ type: CategoryResDto, summary: 'Find category by id' })
+  @ApiParam({ name: 'id', type: 'String' })
+  async findCategory(@Param('id', ParseUUIDPipe) id: Uuid): Promise<CategoryResDto> {
+    return await this.categoryService.findOne(id);
+  }
 
-  // @Get(':id')
-  // @ApiAuth({ type: UserResDto, summary: 'Find user by id' })
-  // @ApiParam({ name: 'id', type: 'String' })
-  // async findUser(@Param('id', ParseUUIDPipe) id: Uuid): Promise<UserResDto> {
-  //   return await this.userService.findOne(id);
-  // }
+  @Patch(':id')
+  @ApiAuth({ type: CategoryResDto, summary: 'Update category' })
+  @ApiParam({ name: 'id', type: 'String' })
+  updateCategory(
+    @Param('id', ParseUUIDPipe) id: Uuid,
+    @Body() reqDto: UpdateCategoryReqDto,
+  ) {
+    return this.categoryService.update(id, reqDto);
+  }
 
-  // @Patch(':id')
-  // @ApiAuth({ type: UserResDto, summary: 'Update user' })
-  // @ApiParam({ name: 'id', type: 'String' })
-  // updateUser(
-  //   @Param('id', ParseUUIDPipe) id: Uuid,
-  //   @Body() reqDto: UpdateUserReqDto,
-  // ) {
-  //   return this.userService.update(id, reqDto);
-  // }
-
-  // @Delete(':id')
-  // @ApiAuth({
-  //   summary: 'Delete user',
-  //   errorResponses: [400, 401, 403, 404, 500],
-  // })
-  // @ApiParam({ name: 'id', type: 'String' })
-  // removeUser(@Param('id', ParseUUIDPipe) id: Uuid) {
-  //   return this.userService.remove(id);
-  // }
-
-  // @ApiAuth()
-  // @Post('me/change-password')
-  // async changePassword() {
-  //   return 'change-password';
-  // }
+  @Delete(':id')
+  @ApiAuth({
+    summary: 'Delete category',
+    errorResponses: [400, 401, 403, 404, 500],
+  })
+  @ApiParam({ name: 'id', type: 'String' })
+  removeCategory(@Param('id', ParseUUIDPipe) id: Uuid) {
+    return this.categoryService.remove(id);
+  }
 }

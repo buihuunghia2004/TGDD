@@ -1,123 +1,83 @@
-`import { CursorPaginationDto } from '@/common/dto/cursor-pagination/cursor-pagination.dto';
-import { CursorPaginatedDto } from '@/common/dto/cursor-pagination/paginated.dto';
-import { OffsetPaginatedDto } from '@/common/dto/offset-pagination/paginated.dto';
+`import { OffsetPaginatedDto } from '@/common/dto/offset-pagination/paginated.dto';
 import { Uuid } from '@/common/types/common.type';
 import { SYSTEM_USER_ID } from '@/constants/app.constant';
 import { ErrorCode } from '@/constants/error-code.constant';
 import { ValidationException } from '@/exceptions/validation.exception';
-import { buildPaginator } from '@/utils/cursor-pagination';
-import { paginate } from '@/utils/offset-pagination';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 import { plainToInstance } from 'class-transformer';
 import { Repository } from 'typeorm';
-import { CategoryEntity } from './entites/entity';
+import { yxxEntity } from './entites/xxx.entity';
+import { CreateyxxReqDto } from './dto/create-xxx.req.dto';
+import { yxxResDto } from './dto/xxx.res.dto';
+import { ListyxxReqDto } from './dto/list-xxx.req.dto';
+import { OffsetPaginationDto } from '@/common/dto/offset-pagination/offset-pagination.dto';
+import { UpdateyxxReqDto } from './dto/update-xxx.req.dto';
 
 @Injectable()
-export class CategoryService {
-  private readonly logger = new Logger(CategoryService.name);
+export class yxxService {
+  private readonly logger = new Logger(yxxService.name);
 
   constructor(
-    @InjectRepository(CategoryEntity)
-    private readonly CategoryRepository: Repository<CategoryEntity>,
+    @InjectRepository(yxxEntity)
+    private readonly xxxRepository: Repository<yxxEntity>,
   ) {}
 
-  async create(dto: CreateUserReqDto): Promise<UserResDto> {
-    const { username, email, password, image } = dto;
+  async create(dto: CreateyxxReqDto): Promise<yxxResDto> {
+    const { name } = dto;
 
-    // check uniqueness of username/email
-    const user = await this.userRepository.findOne({
-      where: [
-        {
-          username,
-        },
-        {
-          email,
-        },
-      ],
+    const xxx = await this.xxxRepository.findOne({
+      where: {name}
     });
 
-    if (user) {
+    if (xxx) {
       throw new ValidationException(ErrorCode.E001);
     }
 
-    const newUser = new UserEntity({
-      username,
-      email,
-      password,
-      image,
+    const newyxx = new yxxEntity({
+      name,
+      slug: name.toLowerCase(),
       createdBy: SYSTEM_USER_ID,
       updatedBy: SYSTEM_USER_ID,
     });
 
-    const savedUser = await this.userRepository.save(newUser);
-    this.logger.debug(savedUser);
+    const savedyxx = await this.xxxRepository.save(newyxx);
+    this.logger.debug(savedyxx);
 
-    return plainToInstance(UserResDto, savedUser);
+    return plainToInstance(yxxResDto, savedyxx);
   }
 
-  async findAll(
-    reqDto: ListUserReqDto,
-  ): Promise<OffsetPaginatedDto<UserResDto>> {
-    const query = this.userRepository
-      .createQueryBuilder('user')
-      .orderBy(reqDto._sort[0], reqDto._sort[1])
-      // .select(reqDto._only);
-    const [users, metaDto] = await paginate<UserEntity>(query, reqDto, {
-      skipCount: false,
-      takeAll: false,
-    });
-    return new OffsetPaginatedDto(plainToInstance(UserResDto, users), metaDto);
+  async findAll(reqDto:ListyxxReqDto): Promise<OffsetPaginatedDto<yxxResDto>>{
+    console.log('reqDto',reqDto);
+    
+    const [entities,count] = await this.xxxRepository.findAndCount({
+      ...reqDto._options
+    })
+
+    const metaDto = new OffsetPaginationDto(count, reqDto);
+    return new OffsetPaginatedDto<yxxResDto>(plainToInstance(yxxResDto,entities), metaDto);
   }
 
-  async loadMoreUsers(
-    reqDto: LoadMoreUsersReqDto,
-  ): Promise<CursorPaginatedDto<UserResDto>> {
-    const queryBuilder = this.userRepository.createQueryBuilder('user');
-    const paginator = buildPaginator({
-      entity: UserEntity,
-      alias: 'user',
-      paginationKeys: ['createdAt'],
-      query: {
-        limit: reqDto.limit,
-        order: 'DESC',
-        afterCursor: reqDto.afterCursor,
-        beforeCursor: reqDto.beforeCursor,
-      },
-    });
-
-    const { data, cursor } = await paginator.paginate(queryBuilder);
-
-    const metaDto = new CursorPaginationDto(
-      data.length,
-      cursor.afterCursor,
-      cursor.beforeCursor,
-      reqDto,
-    );
-
-    return new CursorPaginatedDto(plainToInstance(UserResDto, data), metaDto);
-  }
-
-  async findOne(id: Uuid): Promise<UserResDto> {
+  async findOne(id: Uuid): Promise<yxxResDto> {
     assert(id, 'id is required');
-    const user = await this.userRepository.findOneByOrFail({ id });
-
-    return user.toDto(UserResDto);
+    const xxx = await this.xxxRepository.findOneByOrFail({ id });
+    return xxx.toDto(yxxResDto);
   }
 
-  async update(id: Uuid, updateUserDto: UpdateUserReqDto) {
-    const user = await this.userRepository.findOneByOrFail({ id });
+  async update(id: Uuid, updateyxxDto: UpdateyxxReqDto ) {
+    const xxx = await this.xxxRepository.findOneByOrFail({ id });
 
-    user.image = updateUserDto.image;
-    user.updatedBy = SYSTEM_USER_ID;
+    xxx.name = updateyxxDto.name;
+    xxx.slug = updateyxxDto.name.toLowerCase();
+    xxx.updatedBy = SYSTEM_USER_ID;
 
-    await this.userRepository.save(user);
+    await this.xxxRepository.save(xxx);
   }
 
   async remove(id: Uuid) {
-    await this.userRepository.findOneByOrFail({ id });
-    await this.userRepository.softDelete(id);
+    await this.xxxRepository.findOneByOrFail({ id });
+    await this.xxxRepository.softDelete(id);
   }
 }
 `

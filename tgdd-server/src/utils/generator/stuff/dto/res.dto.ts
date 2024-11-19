@@ -6,33 +6,10 @@
 import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
-export class UserResDto {
+export class yxxResDto {
   @StringField()
   @Expose()
   id: string;
 
-  @StringField()
-  @Expose()
-  username: string;
-
-  @StringField()
-  @Expose()
-  email: string;
-
-  @StringFieldOptional()
-  @Expose()
-  bio?: string;
-
-  @StringField()
-  @Expose()
-  image: string;
-
-  @ClassField(() => Date)
-  @Expose()
-  createdAt: Date;
-
-  @ClassField(() => Date)
-  @Expose()
-  updatedAt: Date;
 }
 `

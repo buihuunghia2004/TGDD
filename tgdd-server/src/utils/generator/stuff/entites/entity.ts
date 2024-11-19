@@ -2,14 +2,14 @@
 import { Uuid } from '@/common/types/common.type';
 import { AbstractEntity } from '@/database/entities/abstract.entity';
 
-@Entity('category')
-export class CategoryEntity extends AbstractEntity {
-  constructor(data?: Partial<CategoryEntity>) {
+@Entity('xxx')
+export class yxxEntity extends AbstractEntity {
+  constructor(data?: Partial<XxEntity>) {
     super();
     Object.assign(this, data);
   }
 
-  @PrimaryGeneratedColumn('uuid', { primaryKeyConstraintName: 'PK_category_id' })
+  @PrimaryGeneratedColumn('uuid', { primaryKeyConstraintName: 'PK_xxx_id' })
   id!: Uuid;
 
 

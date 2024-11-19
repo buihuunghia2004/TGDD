@@ -20,13 +20,15 @@ function App() {
         <Routes>
           <Route path="login" element={isLogin ? <Navigate to="/" replace /> : <LoginPage />} />
           {
-            isLogin && (
+            isLogin ? (
                 <Route path="/" element={<HomePage />} >
                   <Route index element={<Navigate to="/admin-manage" replace />} />
                   <Route path="admin-manage" element={<AdminManagerPage />} />
                   <Route path="categories" element={<CategoryPage />} />
                 </Route>
-            )  
+            ) : (
+              <Route path="/" element={<Navigate to="/login" replace />} />
+            )
           }
           <Route path="/*" element={<div><h1>404</h1></div>} />
         </Routes>

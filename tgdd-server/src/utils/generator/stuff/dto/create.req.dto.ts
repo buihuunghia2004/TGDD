@@ -7,21 +7,7 @@
 import { lowerCaseTransformer } from '@/utils/transformers/lower-case.transformer';
 import { Transform } from 'class-transformer';
 
-export class CreateUserReqDto {
-  @StringField()
-  @Transform(lowerCaseTransformer)
-  username: string;
+export class CreateyxxReqDto {
 
-  @EmailField()
-  email: string;
-
-  @PasswordField()
-  password: string;
-
-  @StringFieldOptional()
-  bio?: string;
-
-  @StringFieldOptional()
-  image?: string;
 }
 `

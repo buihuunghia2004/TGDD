@@ -1,0 +1,13 @@
+{
+  "unique": {
+    "name": "Category already exists"
+  },
+  "validation": {
+    "is_empty": "Field is required"
+  },
+  "error": {
+    "name_exists": "Category name already exists",
+    "not_found": "Category not found",
+    "invalid_token": "Invalid token"
+  }
+}

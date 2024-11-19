@@ -1,4 +1,4 @@
-`import { CreateUserReqDto } from './create.req.dto';
+`import { CreateyxxReqDto } from './create.req.dto';
 
-export class UpdateUserReqDto extends CreateUserReqDto {}
+export class UpdateyxxReqDto extends CreateyxxReqDto {}
 `
