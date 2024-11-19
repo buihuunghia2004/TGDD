@@ -16,11 +16,11 @@ import {
 } from '@nestjs/common';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@/guards/auth.guard';
-import { brandService } from './brand.service';
-import { brandResDto } from './dto/brand.res.dto';
-import { CreatebrandReqDto } from './dto/create-brand.req.dto';
-import { ListbrandReqDto } from './dto/list-brand.req.dto';
-import { UpdatebrandReqDto } from './dto/update-brand.req.dto';
+import { BrandService } from './brand.service';
+import { BrandResDto } from './dto/brand.res.dto';
+import { CreateBrandReqDto } from './dto/create-brand.req.dto';
+import { ListBrandReqDto } from './dto/list-brand.req.dto';
+import { UpdateBrandReqDto } from './dto/update-brand.req.dto';
 
 @ApiTags('brands')
 @UseGuards(AuthGuard)
@@ -28,46 +28,46 @@ import { UpdatebrandReqDto } from './dto/update-brand.req.dto';
   path: 'brands',
   version: '1',
 })
-export class brandController {
-  constructor(private readonly brandService: brandService) {}
+export class BrandController {
+  constructor(private readonly brandService: BrandService) {}
 
   @Post()
   @ApiAuth({
-    type: brandResDto,
+    type: BrandResDto,
     summary: 'Create brand',
     statusCode: HttpStatus.CREATED,
   })
   async createbrand(
-    @Body() createbrandDto: CreatebrandReqDto,
-  ): Promise<brandResDto> {
+    @Body() createbrandDto: CreateBrandReqDto,
+  ): Promise<BrandResDto> {
     return await this.brandService.create(createbrandDto);
   }
 
   @Get()
   @ApiAuth({
-    type: brandResDto,
+    type: BrandResDto,
     summary: 'List categories',
     isPaginated: true,
   })
   async findAllCategories(
-    @Query() reqDto: ListbrandReqDto,
-  ): Promise<OffsetPaginatedDto<brandResDto>> {
+    @Query() reqDto: ListBrandReqDto,
+  ): Promise<OffsetPaginatedDto<BrandResDto>> {
     return await this.brandService.findAll(reqDto);
   }
 
   @Get(':id')
-  @ApiAuth({ type: brandResDto, summary: 'Find brand by id' })
+  @ApiAuth({ type: BrandResDto, summary: 'Find brand by id' })
   @ApiParam({ name: 'id', type: 'String' })
-  async findbrand(@Param('id', ParseUUIDPipe) id: Uuid): Promise<brandResDto> {
+  async findbrand(@Param('id', ParseUUIDPipe) id: Uuid): Promise<BrandResDto> {
     return await this.brandService.findOne(id);
   }
 
   @Patch(':id')
-  @ApiAuth({ type: brandResDto, summary: 'Update brand' })
+  @ApiAuth({ type: BrandResDto, summary: 'Update brand' })
   @ApiParam({ name: 'id', type: 'String' })
   updatebrand(
     @Param('id', ParseUUIDPipe) id: Uuid,
-    @Body() reqDto: UpdatebrandReqDto,
+    @Body() reqDto: UpdateBrandReqDto,
   ) {
     return this.brandService.update(id, reqDto);
   }

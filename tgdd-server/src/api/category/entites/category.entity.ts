@@ -1,4 +1,4 @@
-import { BrandEntity } from '@/api/brand/entites/brand.entity';
+import { BrandEntity } from '@/api/brand/entities/brand.entity';
 import { Uuid } from '@/common/types/common.type';
 import { AbstractEntity } from '@/database/entities/abstract.entity';
 import {

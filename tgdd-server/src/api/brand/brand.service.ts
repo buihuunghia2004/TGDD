@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 import { plainToInstance } from 'class-transformer';
 import { Repository } from 'typeorm';
-import { BrandEntity } from './entites/brand.entity';
+import { BrandEntity } from './entities/brand.entity';
 import { CreateBrandReqDto } from './dto/create-brand.req.dto';
 import { BrandResDto } from './dto/brand.res.dto';
 import { ListBrandReqDto } from './dto/list-brand.req.dto';
@@ -37,7 +37,6 @@ export class BrandService {
 
     const newBrand = new BrandEntity({
       name,
-      slug: name.toLowerCase(),
       createdBy: SYSTEM_USER_ID,
       updatedBy: SYSTEM_USER_ID,
     });
@@ -48,9 +47,7 @@ export class BrandService {
     return plainToInstance(BrandResDto, savedBrand);
   }
 
-  async findAll(reqDto:ListBrandReqDto): Promise<OffsetPaginatedDto<BrandResDto>>{
-    console.log('reqDto',reqDto);
-    
+  async findAll(reqDto:ListBrandReqDto): Promise<OffsetPaginatedDto<BrandResDto>>{    
     const [entities,count] = await this.brandRepository.findAndCount({
       ...reqDto._options
     })
@@ -69,7 +66,6 @@ export class BrandService {
     const brand = await this.brandRepository.findOneByOrFail({ id });
 
     brand.name = updateBrandDto.name;
-    brand.slug = updateBrandDto.name.toLowerCase();
     brand.updatedBy = SYSTEM_USER_ID;
 
     await this.brandRepository.save(brand);
