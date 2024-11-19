@@ -46,10 +46,10 @@ export class BrandController {
   @Get()
   @ApiAuth({
     type: BrandResDto,
-    summary: 'List categories',
+    summary: 'List brands',
     isPaginated: true,
   })
-  async findAllCategories(
+  async findAllBrands(
     @Query() reqDto: ListBrandReqDto,
   ): Promise<OffsetPaginatedDto<BrandResDto>> {
     return await this.brandService.findAll(reqDto);

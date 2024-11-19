@@ -46,10 +46,10 @@ export class yxxController {
   @Get()
   @ApiAuth({
     type: xxxResDto,
-    summary: 'List categories',
+    summary: 'List xxxs',
     isPaginated: true,
   })
-  async findAllCategories(
+  async findAllyxxs(
     @Query() reqDto: ListyxxReqDto,
   ): Promise<OffsetPaginatedDto<yxxResDto>> {
     return await this.xxxService.findAll(reqDto);
