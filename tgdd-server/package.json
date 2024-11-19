@@ -31,7 +31,7 @@
     "prepare": "husky || true",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
-    "fs:api": "tsc && node src/utils/generator/generate-api.js"
+    "fs:api": "node src/utils/generator/generate-api.js"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.2",

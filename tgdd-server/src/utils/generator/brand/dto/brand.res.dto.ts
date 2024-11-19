@@ -1,4 +1,4 @@
-`import {
+import {
   ClassField,
   StringField,
   StringFieldOptional,
@@ -6,10 +6,9 @@
 import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
-export class yxxResDto {
+export class BrandResDto {
   @StringField()
   @Expose()
   id: string;
 
 }
-`

@@ -1,10 +1,10 @@
-`import { DeleteDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { DeleteDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Uuid } from '@/common/types/common.type';
 import { AbstractEntity } from '@/database/entities/abstract.entity';
 
 @Entity('xxx')
 export class yxxEntity extends AbstractEntity {
-  constructor(data?: Partial<XxEntity>) {
+  constructor(data?: Partial<yxxEntity>) {
     super();
     Object.assign(this, data);
   }
@@ -21,4 +21,3 @@ export class yxxEntity extends AbstractEntity {
   deletedAt: Date;
 
 }
-`

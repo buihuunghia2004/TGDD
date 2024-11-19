@@ -1,8 +1,8 @@
-`import { Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { yxxEntity } from './entites/entity';
-import { yxxController } from './controller';
-import { yxxService } from './service';
+import { yxxEntity } from './entites/xxx.entity';
+import { yxxController } from './xxx.controller';
+import { yxxService } from './xxx.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([yxxEntity])],
@@ -11,4 +11,3 @@ import { yxxService } from './service';
   exports: [yxxService],
 })
 export class yxxModule {}
-`

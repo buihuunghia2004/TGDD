@@ -1,4 +1,4 @@
-`import {
+import {
   EmailField,
   PasswordField,
   StringField,
@@ -10,4 +10,3 @@ import { Transform } from 'class-transformer';
 export class CreateyxxReqDto {
 
 }
-`

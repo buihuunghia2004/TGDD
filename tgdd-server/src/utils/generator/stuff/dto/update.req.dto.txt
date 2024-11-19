@@ -1,4 +1,3 @@
-`import { CreateyxxReqDto } from './create.req.dto';
+import { CreateyxxReqDto } from './create.req.dto';
 
 export class UpdateyxxReqDto extends CreateyxxReqDto {}
-`
