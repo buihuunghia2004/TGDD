@@ -9,4 +9,6 @@ import { Transform } from 'class-transformer';
 
 export class CreateProductReqDto {
 
+  @StringField()
+  name: string
 }

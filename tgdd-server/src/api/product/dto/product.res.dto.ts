@@ -10,5 +10,12 @@ export class ProductResDto {
   @StringField()
   @Expose()
   id: string;
-
 }
+
+export const PRODUCT_RES_FIELDS = [
+  'id',
+  'name',
+  'image',
+  'createdAt',
+  'updatedAt',
+]

@@ -8,12 +8,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 import { plainToInstance } from 'class-transformer';
 import { Repository } from 'typeorm';
-import { ProductEntity } from './entites/product.entity';
 import { CreateProductReqDto } from './dto/create-product.req.dto';
 import { ProductResDto } from './dto/product.res.dto';
 import { ListProductReqDto } from './dto/list-product.req.dto';
 import { OffsetPaginationDto } from '@/common/dto/offset-pagination/offset-pagination.dto';
 import { UpdateProductReqDto } from './dto/update-product.req.dto';
+import { ProductEntity } from './entities/product.entity';
 
 @Injectable()
 export class ProductService {
@@ -28,7 +28,6 @@ export class ProductService {
     const { name } = dto;
 
     const product = await this.productRepository.findOne({
-      where: {name}
     });
 
     if (product) {
@@ -36,8 +35,6 @@ export class ProductService {
     }
 
     const newProduct = new ProductEntity({
-      name,
-      slug: name.toLowerCase(),
       createdBy: SYSTEM_USER_ID,
       updatedBy: SYSTEM_USER_ID,
     });
@@ -68,8 +65,6 @@ export class ProductService {
   async update(id: Uuid, updateProductDto: UpdateProductReqDto ) {
     const product = await this.productRepository.findOneByOrFail({ id });
 
-    product.name = updateProductDto.name;
-    product.slug = updateProductDto.name.toLowerCase();
     product.updatedBy = SYSTEM_USER_ID;
 
     await this.productRepository.save(product);

@@ -9,12 +9,15 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AdminModule } from '../admin/admin.module';
 import { AdminEntity } from '../admin/entities/admin.entity';
+import { CategoryModule } from '../category/category.module';
+import { CategoryEntity } from '../category/entites/category.entity';
 
 @Module({
   imports: [
     UserModule,
     AdminModule,
-    TypeOrmModule.forFeature([UserEntity, AdminEntity]),
+    CategoryModule,
+    TypeOrmModule.forFeature([UserEntity, AdminEntity, CategoryEntity]),
     JwtModule.register({}),
     BullModule.registerQueue({
       name: QueueName.EMAIL,

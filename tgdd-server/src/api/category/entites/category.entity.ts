@@ -1,4 +1,5 @@
 import { BrandEntity } from '@/api/brand/entities/brand.entity';
+import { ProductEntity } from '@/api/product/entities/product.entity';
 import { Uuid } from '@/common/types/common.type';
 import { AbstractEntity } from '@/database/entities/abstract.entity';
 import {
@@ -37,4 +38,7 @@ export class CategoryEntity extends AbstractEntity {
 
   @OneToMany(() => BrandEntity, (brand) => brand.category)
   brands: Relation<BrandEntity[]>;
+
+  @OneToMany(() => ProductEntity, (product) => product.category)
+  products: Relation<ProductEntity[]>;
 }

@@ -23,7 +23,6 @@ import { ListCategoryReqDto } from './dto/list-category.req.dto';
 import { UpdateCategoryReqDto } from './dto/update-category.req.dto';
 
 @ApiTags('categories')
-@UseGuards(AuthGuard)
 @Controller({
   path: 'categories',
   version: '1',

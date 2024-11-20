@@ -16,11 +16,12 @@ import {
 } from '@nestjs/common';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@/guards/auth.guard';
-import { productService } from './product.service';
-import { productResDto } from './dto/product.res.dto';
+// import { productService } from './product.service';
+import { ProductResDto } from './dto/product.res.dto';
 import { CreateProductReqDto } from './dto/create-product.req.dto';
 import { ListProductReqDto } from './dto/list-product.req.dto';
 import { UpdateProductReqDto } from './dto/update-product.req.dto';
+import { ProductService } from './product.service';
 
 @ApiTags('products')
 @UseGuards(AuthGuard)
@@ -29,11 +30,11 @@ import { UpdateProductReqDto } from './dto/update-product.req.dto';
   version: '1',
 })
 export class ProductController {
-  constructor(private readonly productService: productService) {}
+  constructor(private readonly productService: ProductService) {}
 
   @Post()
   @ApiAuth({
-    type: productResDto,
+    type: ProductResDto,
     summary: 'Create product',
     statusCode: HttpStatus.CREATED,
   })
@@ -45,7 +46,7 @@ export class ProductController {
 
   @Get()
   @ApiAuth({
-    type: productResDto,
+    type: ProductResDto,
     summary: 'List products',
     isPaginated: true,
   })
@@ -56,14 +57,14 @@ export class ProductController {
   }
 
   @Get(':id')
-  @ApiAuth({ type: productResDto, summary: 'Find product by id' })
+  @ApiAuth({ type: ProductResDto, summary: 'Find product by id' })
   @ApiParam({ name: 'id', type: 'String' })
   async findProduct(@Param('id', ParseUUIDPipe) id: Uuid): Promise<ProductResDto> {
     return await this.productService.findOne(id);
   }
 
   @Patch(':id')
-  @ApiAuth({ type: productResDto, summary: 'Update product' })
+  @ApiAuth({ type: ProductResDto, summary: 'Update product' })
   @ApiParam({ name: 'id', type: 'String' })
   updateProduct(
     @Param('id', ParseUUIDPipe) id: Uuid,

@@ -16,8 +16,8 @@ import {
 } from '@nestjs/common';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@/guards/auth.guard';
-import { xxxService } from './xxx.service';
-import { xxxResDto } from './dto/xxx.res.dto';
+import { yxxService } from './xxx.service';
+import { yxxResDto } from './dto/xxx.res.dto';
 import { CreateyxxReqDto } from './dto/create-xxx.req.dto';
 import { ListyxxReqDto } from './dto/list-xxx.req.dto';
 import { UpdateyxxReqDto } from './dto/update-xxx.req.dto';
@@ -33,7 +33,7 @@ export class yxxController {
 
   @Post()
   @ApiAuth({
-    type: xxxResDto,
+    type: yxxResDto,
     summary: 'Create xxx',
     statusCode: HttpStatus.CREATED,
   })
@@ -45,7 +45,7 @@ export class yxxController {
 
   @Get()
   @ApiAuth({
-    type: xxxResDto,
+    type: yxxResDto,
     summary: 'List xxxs',
     isPaginated: true,
   })
@@ -56,14 +56,14 @@ export class yxxController {
   }
 
   @Get(':id')
-  @ApiAuth({ type: xxxResDto, summary: 'Find xxx by id' })
+  @ApiAuth({ type: yxxResDto, summary: 'Find xxx by id' })
   @ApiParam({ name: 'id', type: 'String' })
   async findyxx(@Param('id', ParseUUIDPipe) id: Uuid): Promise<yxxResDto> {
     return await this.xxxService.findOne(id);
   }
 
   @Patch(':id')
-  @ApiAuth({ type: xxxResDto, summary: 'Update xxx' })
+  @ApiAuth({ type: yxxResDto, summary: 'Update xxx' })
   @ApiParam({ name: 'id', type: 'String' })
   updateyxx(
     @Param('id', ParseUUIDPipe) id: Uuid,

@@ -1,7 +1,8 @@
-import { Column, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
+import { Column, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Relation } from 'typeorm';
 import { Uuid } from '@/common/types/common.type';
 import { AbstractEntity } from '@/database/entities/abstract.entity';
 import { CategoryEntity } from '@/api/category/entites/category.entity';
+import { ProductEntity } from '@/api/product/entities/product.entity';
 
 @Entity('brand')
 export class BrandEntity extends AbstractEntity {
@@ -25,6 +26,12 @@ export class BrandEntity extends AbstractEntity {
     default: null,
   })
   deletedAt: Date;
+
+  @OneToMany(() => CategoryEntity, (category) => category.brands)
+  categories: Relation<CategoryEntity[]>
+
+  @OneToMany(() => ProductEntity, (product) => product.brand)
+  products: Relation<ProductEntity[]>
 
   @JoinColumn({
     name: 'category_id',
