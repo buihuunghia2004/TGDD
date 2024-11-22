@@ -1,9 +1,8 @@
 import { Column, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Relation, TableInheritance } from 'typeorm';
 import { AbstractEntity } from '@/database/entities/abstract.entity';
 import { ProductEntity } from './product.entity';
-import { VariantTypeEntity } from './variant-type.entity';
-import { ImageVariantEntity } from './image-variant.entity';
 import { Uuid } from '@/common/types/common.type';
+import { ColorOptionEntity } from '../color-option/entities/color-option.entity';
 
 @Entity('base_variant')
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
@@ -16,17 +15,23 @@ export abstract class BaseVariantEntity extends AbstractEntity {
   @PrimaryGeneratedColumn()
   id!: Uuid;
 
+  @Column({name:'option_name'})
+  optionName!: string
+
   @Column({name:'variant_name'})
   variantName!: string
+
+  @Column()
+  price!: number
+
+  @Column()
+  quantity?: number
 
   @ManyToOne(() => ProductEntity )
   product: Relation<ProductEntity>
 
-  @OneToOne(() => VariantTypeEntity, (variantType) => variantType.variant )
-  variantType?: Relation<VariantTypeEntity>
-
-  @OneToMany(() => ImageVariantEntity, (image) => image.id)
-  images?: Relation<ImageVariantEntity[]>
+  @ManyToOne(() => ColorOptionEntity, (color) => color.variants)
+  color?: Relation<ColorOptionEntity>
 
   @DeleteDateColumn({
     name: 'deleted_at',

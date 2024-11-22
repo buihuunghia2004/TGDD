@@ -15,7 +15,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@/guards/auth.guard';
 import { CategoryService } from './category.service';
 import { CategoryResDto } from './dto/category.res.dto';
 import { CreateCategoryReqDto } from './dto/create-category.req.dto';

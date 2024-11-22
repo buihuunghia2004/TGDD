@@ -4,7 +4,6 @@ import { BaseVariantEntity } from './variant-base.entity';
 import { Uuid } from '@/common/types/common.type';
 import { CategoryEntity } from '@/api/category/entites/category.entity';
 import { BrandEntity } from '@/api/brand/entities/brand.entity';
-import { VariantTypeEntity } from './variant-type.entity';
 
 @Entity('product')
 export class ProductEntity extends AbstractEntity {
@@ -19,14 +18,14 @@ export class ProductEntity extends AbstractEntity {
   @Column({name:'product_name'})
   productName!: string
 
-  @Column({name:'image'})
+  @Column()
   image?: string
+
+  @Column({name:'option_title'})
+  optionTitle?: string
 
   @OneToMany(() => BaseVariantEntity, (variant) => variant.product)
   variants?: Relation<BaseVariantEntity[]>
-
-  @OneToMany(() => VariantTypeEntity, (variant) => variant.product)
-  variantTypes?: Relation<VariantTypeEntity[]>
 
   @ManyToOne(() => CategoryEntity, (category) => category.products)
   category?: Relation<CategoryEntity>

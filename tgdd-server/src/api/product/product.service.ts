@@ -14,6 +14,8 @@ import { ListProductReqDto } from './dto/list-product.req.dto';
 import { OffsetPaginationDto } from '@/common/dto/offset-pagination/offset-pagination.dto';
 import { UpdateProductReqDto } from './dto/update-product.req.dto';
 import { ProductEntity } from './entities/product.entity';
+import { BrandEntity } from '../brand/entities/brand.entity';
+import { SmartPhoneVariantEntity } from './smart-phone-variant/entities/smartphone-variant.enity';
 
 @Injectable()
 export class ProductService {
@@ -22,20 +24,59 @@ export class ProductService {
   constructor(
     @InjectRepository(ProductEntity)
     private readonly productRepository: Repository<ProductEntity>,
+    @InjectRepository(SmartPhoneVariantEntity)
+    private readonly smartphoneRepository: Repository<SmartPhoneVariantEntity>,
+    @InjectRepository(BrandEntity)
+    private readonly brandRepository: Repository<BrandEntity>,
   ) {}
 
-  async create(dto: CreateProductReqDto): Promise<ProductResDto> {
-    const { name } = dto;
+  async create(dto: CreateProductReqDto, creator: string): Promise<ProductResDto> {
+    const brand = await this.brandRepository.findOneOrFail({where: {id: dto.brandId},relations: ['category']});
+    const productExists = await this.productRepository.findOne({where: {productName: dto.productName, brand: brand}});
 
-    const product = await this.productRepository.findOne({
-    });
-
-    if (product) {
+    if (productExists) {
       throw new ValidationException(ErrorCode.E001);
     }
 
+
+    const a  = new SmartPhoneVariantEntity();
+    a.os = 'os';
+    a.cpu = 'cpu';
+    a.ram = 'ram';
+    a.rom = 'rom';
+    a.screenSize = 'screenSize';
+    a.screenTech = 'screenTech';
+    a.screenResolution = 'screenResolution';
+    a.fontCam = 'fontCam';
+    a.backCam = 'backCam';
+    a.pin = 'pin';
+    a.sim = 'sim';
+    a.charge = 'charge';
+    a.wifi = 'wifi';
+    await this.smartphoneRepository.save(a);
+
+    console.log('ssss');
+    
+    
+    const smartPhoneVariants = dto.variants.map((variant) => {
+      return new SmartPhoneVariantEntity({
+        createdBy: creator,
+        updatedBy: SYSTEM_USER_ID,
+      });
+    })
+
+
+
+    // await this.smartphoneRepository.save(smartPhoneVariants);
+
     const newProduct = new ProductEntity({
-      createdBy: SYSTEM_USER_ID,
+      productName: dto.productName,
+      image: dto.image,
+      optionTitle: dto.optionTitle,
+      variants: smartPhoneVariants,
+      brand: brand,
+      category: brand.category,
+      createdBy: creator,
       updatedBy: SYSTEM_USER_ID,
     });
 

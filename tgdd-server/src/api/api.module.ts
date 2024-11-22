@@ -5,6 +5,7 @@ import { HealthModule } from './health/health.module';
 import { HomeModule } from './home/home.module';
 import { UserModule } from './user/user.module';
 import { CategoryModule } from './category/category.module';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { CategoryModule } from './category/category.module';
     HealthModule, 
     AuthModule, 
     HomeModule,
-    CategoryModule
+    CategoryModule,
+    ProductModule
   ],
 })
 export class ApiModule {}

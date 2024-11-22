@@ -12,11 +12,10 @@ import {
   Patch,
   Post,
   Query,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@/guards/auth.guard';
-// import { productService } from './product.service';
 import { ProductResDto } from './dto/product.res.dto';
 import { CreateProductReqDto } from './dto/create-product.req.dto';
 import { ListProductReqDto } from './dto/list-product.req.dto';
@@ -24,7 +23,6 @@ import { UpdateProductReqDto } from './dto/update-product.req.dto';
 import { ProductService } from './product.service';
 
 @ApiTags('products')
-@UseGuards(AuthGuard)
 @Controller({
   path: 'products',
   version: '1',
@@ -40,8 +38,9 @@ export class ProductController {
   })
   async createProduct(
     @Body() createProductDto: CreateProductReqDto,
+    @Request() req
   ): Promise<ProductResDto> {
-    return await this.productService.create(createProductDto);
+    return await this.productService.create(createProductDto,req.user.username);
   }
 
   @Get()

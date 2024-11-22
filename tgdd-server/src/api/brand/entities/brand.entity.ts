@@ -27,9 +27,6 @@ export class BrandEntity extends AbstractEntity {
   })
   deletedAt: Date;
 
-  @OneToMany(() => CategoryEntity, (category) => category.brands)
-  categories: Relation<CategoryEntity[]>
-
   @OneToMany(() => ProductEntity, (product) => product.brand)
   products: Relation<ProductEntity[]>
 
