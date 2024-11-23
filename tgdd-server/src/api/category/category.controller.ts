@@ -12,7 +12,6 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { CategoryService } from './category.service';

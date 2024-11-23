@@ -1,6 +1,6 @@
 import { BrandEntity } from '@/api/brand/entities/brand.entity';
-import { ProductEntity } from '@/api/product/entities/product.entity';
 import { Uuid } from '@/common/types/common.type';
+import { CATEGORY } from '@/constants/product.constant';
 import { AbstractEntity } from '@/database/entities/abstract.entity';
 import {
   Column,
@@ -23,7 +23,7 @@ export class CategoryEntity extends AbstractEntity {
   })
   id!: Uuid;
 
-  @Column({ nullable: false })
+  @Column({ type: 'enum', enum:CATEGORY, default:CATEGORY.UNKNOWN})
   name!: string;
 
   @Column({ nullable: false })
@@ -38,7 +38,4 @@ export class CategoryEntity extends AbstractEntity {
 
   @OneToMany(() => BrandEntity, (brand) => brand.category)
   brands: Relation<BrandEntity[]>;
-
-  @OneToMany(() => ProductEntity, (product) => product.category)
-  products: Relation<ProductEntity[]>;
 }

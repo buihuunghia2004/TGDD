@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, Relation } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
 import { AbstractEntity } from '@/database/entities/abstract.entity';
 import { Uuid } from '@/common/types/common.type';
 import { ColorOptionEntity } from './color-option.entity';
@@ -21,5 +21,4 @@ export class ColorImageEntity extends AbstractEntity {
 
   @ManyToOne(() => ColorOptionEntity, (color) => color.images)
   option?: Relation<ColorOptionEntity>
-
 }

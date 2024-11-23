@@ -4,8 +4,8 @@ import { ProductController } from './product.controller';
 import { ProductService } from './product.service';
 import { ProductEntity } from './entities/product.entity';
 import { BrandEntity } from '../brand/entities/brand.entity';
-import { SmartPhoneVariantEntity } from './smart-phone-variant/entities/smartphone-variant.enity';
-import { BaseVariantEntity } from './entities/variant-base.entity';
+import { BaseVariantEntity } from '../variant/base-variant/entities/variant-base.entity';
+import { SmartPhoneVariantEntity } from '../variant/smart-phone-variant/entities/smartphone-variant.enity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ProductEntity,SmartPhoneVariantEntity,BrandEntity,BaseVariantEntity])],

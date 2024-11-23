@@ -1,8 +1,7 @@
 import { Column, DeleteDateColumn, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
 import { AbstractEntity } from '@/database/entities/abstract.entity';
-import { BaseVariantEntity } from './variant-base.entity';
+import { BaseVariantEntity } from '../../variant/base-variant/entities/variant-base.entity';
 import { Uuid } from '@/common/types/common.type';
-import { CategoryEntity } from '@/api/category/entites/category.entity';
 import { BrandEntity } from '@/api/brand/entities/brand.entity';
 
 @Entity('product')
@@ -19,7 +18,7 @@ export class ProductEntity extends AbstractEntity {
   productName!: string
 
   @Column()
-  image?: string
+  thumbnail!: string
 
   @Column({name:'option_title'})
   optionTitle?: string
@@ -27,11 +26,14 @@ export class ProductEntity extends AbstractEntity {
   @OneToMany(() => BaseVariantEntity, (variant) => variant.product)
   variants?: Relation<BaseVariantEntity[]>
 
-  @ManyToOne(() => CategoryEntity, (category) => category.products)
-  category?: Relation<CategoryEntity>
+  @Column({name:'brand_id'})
+  brandId!: Uuid
 
   @ManyToOne(() => BrandEntity, (brand) => brand.products)
   brand?: Relation<BrandEntity>
+
+  @Column({type: 'json'})
+  attributes?: Record<string, any>;
 
   @DeleteDateColumn({
     name: 'deleted_at',
@@ -39,5 +41,4 @@ export class ProductEntity extends AbstractEntity {
     default: null,
   })
   deletedAt: Date;
-
 }

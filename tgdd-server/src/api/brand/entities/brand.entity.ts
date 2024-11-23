@@ -30,6 +30,9 @@ export class BrandEntity extends AbstractEntity {
   @OneToMany(() => ProductEntity, (product) => product.brand)
   products: Relation<ProductEntity[]>
 
+  @Column({ nullable: false })
+  categoryId!: Uuid
+
   @JoinColumn({
     name: 'category_id',
     referencedColumnName: 'id',
